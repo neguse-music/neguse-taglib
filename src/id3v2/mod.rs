@@ -14,7 +14,7 @@ mod structure;
 mod tools;
 
 pub fn get<T: Read + Seek>(input: &mut T) -> Result<Tags, Error> {
-    let header = r#try!(read::header(input));
+    let header = read::header(input)?;
     get_internal(input, &header)
 }
 
@@ -53,7 +53,7 @@ pub fn set<R: Read + Seek, W: Write>(
     let (old_size, tags) = match read::header(input) {
         // id3v2 tag found
         Ok(h) => {
-            let old = r#try!(get_internal(input, &h));
+            let old = get_internal(input, &h)?;
             (h.size as u64 + 10, delta(&old, new))
         }
         // id3v2 not found, and it's not an I/O error
@@ -151,10 +151,10 @@ pub fn set<R: Read + Seek, W: Write>(
         // size
         vec.append(&mut tools::encode_synch_int(
             1 +                     // encoding
-                    mime.len() as u32 + 1 + // mime type, null
-                    1 +                     // picture type
-                    1 +                     // empty description
-                    image.len() as u32, // image length
+            mime.len() as u32 + 1 + // mime type, null
+            1 +                     // picture type
+            1 +                     // empty description
+            image.len() as u32, // image length
             false,
         )?);
 

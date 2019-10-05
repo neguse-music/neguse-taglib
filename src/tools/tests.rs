@@ -31,8 +31,5 @@ fn utf16_decode_test() {
 
     assert_eq!(decode_utf16(&utf16be), "Test");
     assert_eq!(decode_utf16(&utf16le), "Test");
-    assert_eq!(
-        decode_utf16(&longstr),
-        "こんにちは。てすとですよ～　👀"
-    );
+    assert_eq!(decode_utf16(&longstr), "こんにちは。てすとですよ～　👀");
 }

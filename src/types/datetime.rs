@@ -2,7 +2,7 @@
 pub struct DateTime {
     pub year: Option<i64>,
     pub month: Option<u8>,
-    pub day: Option<u8>, 
+    pub day: Option<u8>,
     pub hour: Option<u8>,
     pub minute: Option<u8>,
     pub second: Option<u8>,
@@ -12,24 +12,23 @@ pub struct DateTime {
 extern crate regex;
 use self::regex::Regex;
 
-
 macro_rules! parse {
     ($c:ident, $i:ident, $t:ty) => {{
         match $c.name(stringify!($i)) {
             None => None,
-            Some(m) => {
-                match m.as_str().parse::<$t>() {
-                    Ok(i) => Some(i),
-                    Err(_) => None,
-                }},
+            Some(m) => match m.as_str().parse::<$t>() {
+                Ok(i) => Some(i),
+                Err(_) => None,
+            },
         }
-    }}
+    }};
 }
 
 impl DateTime {
     pub fn from_iso_8601(string: &str) -> Option<DateTime> {
         lazy_static! {
-            static ref RE: Regex = Regex::new(r"(?x)
+            static ref RE: Regex = Regex::new(
+                r"(?x)
                 ^
                 (?P<year>\d{4})
                   (?:-(?P<month>\d{2})
@@ -42,7 +41,9 @@ impl DateTime {
                     )?
                   )?
                 )?
-            ").unwrap();
+            "
+            )
+            .unwrap();
         }
         if let Some(captures) = RE.captures(string) {
             Some(DateTime {
@@ -90,61 +91,78 @@ impl fmt::Display for DateTime {
 
 #[test]
 fn test() {
-    assert_eq!(DateTime::from_iso_8601("2000").unwrap(), 
-               DateTime { year: Some(2000), ..Default::default() });
-    assert_eq!(DateTime::from_iso_8601("2000-01").unwrap(), 
-               DateTime { 
-                   year: Some(2000), 
-                   month: Some(1),
-                   ..Default::default() 
-               });
-    assert_eq!(DateTime::from_iso_8601("2000-01-01").unwrap(), 
-               DateTime { 
-                   year: Some(2000), 
-                   month: Some(1),
-                   day: Some(1),
-                   ..Default::default() 
-               });
-    assert_eq!(DateTime::from_iso_8601("2000-01-01T00").unwrap(), 
-               DateTime { 
-                   year: Some(2000), 
-                   month: Some(1),
-                   day: Some(1),
-                   hour: Some(0),
-                   ..Default::default() 
-               });
-    assert_eq!(DateTime::from_iso_8601("2000-01-01T00:00").unwrap(), 
-               DateTime { 
-                   year: Some(2000), 
-                   month: Some(1),
-                   day: Some(1),
-                   hour: Some(0),
-                   minute: Some(0),
-                   ..Default::default() 
-               });
-    assert_eq!(DateTime::from_iso_8601("2000-01-01T00:00:00").unwrap(), 
-               DateTime { 
-                   year: Some(2000), 
-                   month: Some(1),
-                   day: Some(1),
-                   hour: Some(0),
-                   minute: Some(0),
-                   second: Some(0),
-                   ..Default::default() 
-               });
+    assert_eq!(
+        DateTime::from_iso_8601("2000").unwrap(),
+        DateTime {
+            year: Some(2000),
+            ..Default::default()
+        }
+    );
+    assert_eq!(
+        DateTime::from_iso_8601("2000-01").unwrap(),
+        DateTime {
+            year: Some(2000),
+            month: Some(1),
+            ..Default::default()
+        }
+    );
+    assert_eq!(
+        DateTime::from_iso_8601("2000-01-01").unwrap(),
+        DateTime {
+            year: Some(2000),
+            month: Some(1),
+            day: Some(1),
+            ..Default::default()
+        }
+    );
+    assert_eq!(
+        DateTime::from_iso_8601("2000-01-01T00").unwrap(),
+        DateTime {
+            year: Some(2000),
+            month: Some(1),
+            day: Some(1),
+            hour: Some(0),
+            ..Default::default()
+        }
+    );
+    assert_eq!(
+        DateTime::from_iso_8601("2000-01-01T00:00").unwrap(),
+        DateTime {
+            year: Some(2000),
+            month: Some(1),
+            day: Some(1),
+            hour: Some(0),
+            minute: Some(0),
+            ..Default::default()
+        }
+    );
+    assert_eq!(
+        DateTime::from_iso_8601("2000-01-01T00:00:00").unwrap(),
+        DateTime {
+            year: Some(2000),
+            month: Some(1),
+            day: Some(1),
+            hour: Some(0),
+            minute: Some(0),
+            second: Some(0),
+            ..Default::default()
+        }
+    );
 
     let s = "2000-01-01T00:00:00";
-    assert_eq!(DateTime::from_iso_8601(s).unwrap().to_iso_8601(), s.to_string());
+    assert_eq!(
+        DateTime::from_iso_8601(s).unwrap().to_iso_8601(),
+        s.to_string()
+    );
 }
-
 
 #[cfg(feature = "chrono")]
 mod chrono {
     use DateTime;
     extern crate chrono;
     use self::chrono::DateTime as ChronoDateTime;
-    use self::chrono::{Utc, TimeZone, Datelike, Timelike};
-    
+    use self::chrono::{Datelike, TimeZone, Timelike, Utc};
+
     impl<Tz: TimeZone> From<ChronoDateTime<Tz>> for DateTime {
         fn from(cdt: ChronoDateTime<Tz>) -> DateTime {
             let cdt = cdt.with_timezone(&Utc);
@@ -159,29 +177,32 @@ mod chrono {
         }
     }
 
-    use self::chrono::{NaiveDateTime, NaiveDate};
+    use self::chrono::{NaiveDate, NaiveDateTime};
 
     impl From<DateTime> for Option<NaiveDateTime> {
         fn from(dt: DateTime) -> Option<NaiveDateTime> {
-            let ndt = NaiveDate::from_ymd_opt(dt.year.unwrap_or(0) as i32, 
-                                              dt.month.unwrap_or(1) as u32, 
-                                              dt.day.unwrap_or(1) as u32);
+            let ndt = NaiveDate::from_ymd_opt(
+                dt.year.unwrap_or(0) as i32,
+                dt.month.unwrap_or(1) as u32,
+                dt.day.unwrap_or(1) as u32,
+            );
             if ndt.is_none() {
                 None
             } else {
-                ndt.unwrap().and_hms_opt(dt.hour.unwrap_or(0) as u32, 
-                                         dt.minute.unwrap_or(0) as u32, 
-                                         dt.second.unwrap_or(0) as u32)
+                ndt.unwrap().and_hms_opt(
+                    dt.hour.unwrap_or(0) as u32,
+                    dt.minute.unwrap_or(0) as u32,
+                    dt.second.unwrap_or(0) as u32,
+                )
             }
         }
     }
     impl From<DateTime> for Option<ChronoDateTime<Utc>> {
         fn from(dt: DateTime) -> Option<ChronoDateTime<Utc>> {
-            let ndt: NaiveDateTime = 
-                match dt.into() {
-                    Some(x) => x,
-                    None => return None,
-                };
+            let ndt: NaiveDateTime = match dt.into() {
+                Some(x) => x,
+                None => return None,
+            };
             Some(ChronoDateTime::<Utc>::from_utc(ndt, Utc))
         }
     }

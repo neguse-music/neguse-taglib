@@ -64,7 +64,7 @@ fn id3v23_read_test() {
         composer: TagOption::Some("伊藤真澄".to_string()),
 
         genre: TagOption::Some("Anime".to_string()),
-        
+
         date: DateTime::from_iso_8601("2017").into(),
 
         track_number: TagOption::Some(21),
@@ -108,9 +108,7 @@ fn id3v24_read_test() {
     let ideal = Tags {
         title: TagOption::Some("EyeCatch".to_string()),
         artist: TagOption::Some("伊賀拓郎".to_string()),
-        album: TagOption::Some(
-            "TVアニメ「月がきれい」サウンドコレクション".to_string(),
-        ),
+        album: TagOption::Some("TVアニメ「月がきれい」サウンドコレクション".to_string()),
         album_artist: TagOption::Some("月がきれい".to_string()),
         date: DateTime::from_iso_8601("2017").into(),
         track_number: TagOption::Some(5),

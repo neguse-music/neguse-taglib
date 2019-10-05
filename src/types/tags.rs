@@ -1,5 +1,5 @@
-use crate::Image;
 use crate::DateTime;
+use crate::Image;
 
 #[derive(PartialEq, Debug, Default)]
 pub struct Tags {
@@ -76,7 +76,7 @@ impl Tags {
 pub enum TagOption<T> {
     Some(T),
     Mixed, // the "do not overwrite" option
-    None
+    None,
 }
 
 impl<T> From<Option<T>> for TagOption<T> {
@@ -99,7 +99,7 @@ impl<T> TagOption<T> {
     pub fn unwrap_or(self, def: T) -> T {
         match self {
             TagOption::Some(x) => x,
-            _ => def
+            _ => def,
         }
     }
     pub fn unwrap(self) -> T {
